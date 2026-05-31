@@ -17,6 +17,7 @@ class AiConverter:
         if require_api_key and not api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
         self._client = anthropic.Anthropic(api_key=api_key)
+        self._async_client = anthropic.AsyncAnthropic(api_key=api_key)
         self._parser = CdmParser()
 
     def convert(self, raw: str, source_uri: str = "", source_format: str = "text") -> CdmDocument:
@@ -38,6 +39,33 @@ class AiConverter:
 
         try:
             doc = self._parser.parse(response_text)
+            doc.frontmatter.conversion_method = ConversionMethod.AI
+            return doc
+        except Exception:
+            return self._fallback_doc(raw, source_uri, source_format)
+
+    async def convert_async(
+        self, raw: str, source_uri: str = "", source_format: str = "text"
+    ) -> CdmDocument:
+        """Stream conversion via AsyncAnthropic; accumulates full CDM text before parsing."""
+        prompt = UNSTRUCTURED_TO_CDM_PROMPT_V1.format(
+            source_uri=source_uri,
+            source_format=source_format,
+            raw_content=raw[:8000],
+        )
+        accumulated: list[str] = []
+        async with self._async_client.messages.stream(
+            model=self.MODEL,
+            max_tokens=4096,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+        ) as stream:
+            async for chunk in stream.text_stream:
+                accumulated.append(chunk)
+
+        full_text = "".join(accumulated)
+        try:
+            doc = self._parser.parse(full_text)
             doc.frontmatter.conversion_method = ConversionMethod.AI
             return doc
         except Exception:
