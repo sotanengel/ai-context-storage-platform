@@ -4,7 +4,7 @@ import base64
 import json
 from pathlib import Path
 
-from formaforge.bronze.ingester import BronzeIngester
+from formaforge.services.pipeline import create_pipeline_service
 
 
 def ingest_to_bronze(
@@ -26,6 +26,6 @@ def ingest_to_bronze(
     """
     content = base64.b64decode(content_b64)
     storage = Path(storage_dir) if storage_dir else None
-    ingester = BronzeIngester(storage_dir=storage)
-    record = ingester.ingest(source_uri=source_uri, content=content, filename=filename)
+    service = create_pipeline_service(storage_dir=storage)
+    record = service.ingest(source_uri=source_uri, content=content, filename=filename)
     return json.dumps(record.model_dump(mode="json"), default=str)

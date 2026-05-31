@@ -1,11 +1,12 @@
 """Gold materializer: convert CdmDocument to the optimal output format."""
 
 from formaforge.gold.adapters import AdapterRegistry
+from formaforge.gold.adapters.base import BaseAdapter
 from formaforge.gold.policy import PolicyEngine
 from formaforge.gold.token_counter import TokenCounter
 from formaforge.models.gold import GoldRequest, GoldResult
 from formaforge.models.silver import CdmDocument
-from formaforge.silver.pii_detector import PiiDetector
+from formaforge.privacy.pii_detector import PiiDetector
 
 
 class GoldMaterializer:
@@ -52,3 +53,6 @@ class GoldMaterializer:
             {"name": name, "class": type(adapter).__name__}
             for name, adapter in self._registry.all().items()
         ]
+
+    def register_adapter(self, name: str, adapter: BaseAdapter) -> None:
+        self._registry.register(name, adapter)

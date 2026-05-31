@@ -2,9 +2,8 @@
 
 import json
 
-from formaforge.gold.materializer import GoldMaterializer
 from formaforge.models.gold import DataShape, GoldRequest, Objective, TargetModel, UseCase
-from formaforge.silver.cdm_parser import CdmParser
+from formaforge.services.pipeline import create_pipeline_service
 
 
 def materialize_gold(
@@ -34,7 +33,6 @@ def materialize_gold(
     Returns:
         JSON string with text, adapter_name, byte_count, token_estimate.
     """
-    doc = CdmParser().parse(silver_cdm_text)
     opts = json.loads(options)
     request = GoldRequest(
         silver_id=silver_id,
@@ -46,5 +44,6 @@ def materialize_gold(
         pii_mask=pii_mask.lower() == "true",
         options={k: str(v) for k, v in opts.items()},
     )
-    result = GoldMaterializer().materialize(doc, request)
+    service = create_pipeline_service()
+    result = service.materialize_from_text(silver_cdm_text, request)
     return json.dumps(result.model_dump())

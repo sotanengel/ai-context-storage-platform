@@ -2,8 +2,8 @@
 
 import json
 
-from formaforge.gold.policy import PolicyEngine
 from formaforge.models.gold import DataShape, Objective, TargetModel, UseCase
+from formaforge.services.pipeline import create_pipeline_service
 
 
 def recommend_format(
@@ -17,19 +17,11 @@ def recommend_format(
     Returns:
         JSON string with format, rationale, and estimated savings.
     """
-    engine = PolicyEngine()
-    adapter = engine.recommend(
+    service = create_pipeline_service()
+    result = service.recommend(
         use_case=UseCase(use_case),
         data_shape=DataShape(data_shape),
         target_model=TargetModel(target_model),
         objective=Objective(objective),
     )
-    rationale = _rationale(use_case, data_shape, objective, adapter)
-    return json.dumps({"format": adapter, "rationale": rationale})
-
-
-def _rationale(use_case: str, data_shape: str, objective: str, adapter: str) -> str:
-    return (
-        f"For use_case={use_case!r}, data_shape={data_shape!r}, "
-        f"objective={objective!r}: {adapter!r} selected per research-backed policy."
-    )
+    return json.dumps(result)

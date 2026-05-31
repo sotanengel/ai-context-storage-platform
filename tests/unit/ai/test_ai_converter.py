@@ -72,3 +72,18 @@ def test_ai_converter_no_api_key_raises() -> None:
     finally:
         if original:
             os.environ["ANTHROPIC_API_KEY"] = original
+
+
+def test_ai_converter_uses_injected_parser() -> None:
+    mock_parser = MagicMock()
+    mock_doc = MagicMock()
+    mock_doc.frontmatter = MagicMock()
+    mock_parser.parse.return_value = mock_doc
+
+    with patch(
+        "formaforge.ai.ai_converter.anthropic.Anthropic", return_value=_mock_anthropic(_SAMPLE_CDM)
+    ):
+        converter = AiConverter(parser=mock_parser)
+        converter.convert("text", "doc.pdf")
+
+    mock_parser.parse.assert_called_once()

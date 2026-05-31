@@ -99,14 +99,10 @@ def test_normalize_then_materialize(tmp_path: Path) -> None:
         ingest_to_bronze("s3://test/data.json", content, "data.json", storage_dir=storage_dir)
     )
     bronze_id = ingest_result["id"]
-    raw_path = ingest_result["raw_content_path"]
 
     silver_text = normalize_to_silver(
         bronze_id=bronze_id,
-        raw_content_path=raw_path,
-        source_format="json",
-        source_uri="s3://test/data.json",
-        structure_class="structured",
+        storage_dir=storage_dir,
     )
     assert "cdm_schema_version" in silver_text
 
