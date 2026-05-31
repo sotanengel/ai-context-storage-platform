@@ -5,16 +5,22 @@ from formaforge.gold.policy import PolicyEngine
 from formaforge.gold.token_counter import TokenCounter
 from formaforge.models.gold import GoldRequest, GoldResult
 from formaforge.models.silver import CdmDocument
-
-# Backward-compatible alias used by register_format_adapter tool
-_ADAPTERS = AdapterRegistry.instance()._adapters
+from formaforge.silver.pii_detector import PiiDetector
 
 
 class GoldMaterializer:
-    def __init__(self) -> None:
-        self._policy = PolicyEngine()
-        self._registry = AdapterRegistry.instance()
-        self._token_counter = TokenCounter()
+    def __init__(
+        self,
+        *,
+        registry: AdapterRegistry | None = None,
+        policy: PolicyEngine | None = None,
+        token_counter: TokenCounter | None = None,
+        pii_detector: PiiDetector | None = None,
+    ) -> None:
+        self._policy = policy or PolicyEngine()
+        self._registry = registry or AdapterRegistry.instance()
+        self._token_counter = token_counter or TokenCounter()
+        self._pii_detector = pii_detector or PiiDetector()
 
     def materialize(self, doc: CdmDocument, request: GoldRequest) -> GoldResult:
         adapter_name = request.adapter_name or self._policy.recommend(
@@ -29,9 +35,7 @@ class GoldMaterializer:
 
         text = adapter.render(doc, **request.options)
         if request.pii_mask:
-            from formaforge.silver.pii_detector import PiiDetector
-
-            text = PiiDetector().mask(text)
+            text = self._pii_detector.mask(text)
         token_estimate = self._token_counter.count(text, str(request.target_model))
 
         return GoldResult(

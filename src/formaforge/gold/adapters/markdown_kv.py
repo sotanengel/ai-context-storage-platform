@@ -30,4 +30,4 @@ class MarkdownKvAdapter(BaseAdapter):
 
     def _data_to_markdown(self, block: CdmDataBlock) -> str:
         writer = CdmWriter()
-        return writer._write_data(block)
+        return writer.write_data_block(block)

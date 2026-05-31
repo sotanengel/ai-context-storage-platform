@@ -4,7 +4,19 @@ import json
 import sys
 import types
 
+import pytest
+
 from formaforge.mcp.tools.register_adapter import register_format_adapter
+
+_injected_modules: list[str] = []
+
+
+@pytest.fixture(autouse=True)
+def _cleanup_injected_modules() -> None:
+    yield
+    for name in _injected_modules:
+        sys.modules.pop(name, None)
+    _injected_modules.clear()
 
 
 def _make_module(name: str, class_name: str, base: type) -> None:
@@ -17,6 +29,7 @@ def _make_module(name: str, class_name: str, base: type) -> None:
     )
     setattr(mod, class_name, cls)
     sys.modules[name] = mod
+    _injected_modules.append(name)
 
 
 def test_register_valid_adapter() -> None:
@@ -47,6 +60,7 @@ def test_register_not_a_base_adapter() -> None:
     mod = types.ModuleType("mytest.not_adapter")
     mod.NotAdapter = type("NotAdapter", (object,), {})  # type: ignore[attr-defined]
     sys.modules["mytest.not_adapter"] = mod
+    _injected_modules.append("mytest.not_adapter")
     result = register_format_adapter(
         name="not_adapter",
         module_path="mytest.not_adapter",
@@ -59,6 +73,7 @@ def test_register_not_a_base_adapter() -> None:
 def test_register_missing_class() -> None:
     mod = types.ModuleType("mytest.empty_mod")
     sys.modules["mytest.empty_mod"] = mod
+    _injected_modules.append("mytest.empty_mod")
     result = register_format_adapter(
         name="missing_cls",
         module_path="mytest.empty_mod",

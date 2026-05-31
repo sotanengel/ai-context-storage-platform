@@ -29,7 +29,7 @@ class CdmWriter:
             if isinstance(block, CdmTableBlock):
                 parts.append(self._write_table(block))
             elif isinstance(block, CdmDataBlock):
-                parts.append(self._write_data(block))
+                parts.append(self.write_data_block(block))
             parts.append("")
 
         return "\n".join(parts)
@@ -49,9 +49,12 @@ class CdmWriter:
         ]
         return "\n".join(lines)
 
-    def _write_data(self, block: CdmDataBlock) -> str:
+    def write_data_block(self, block: CdmDataBlock) -> str:
         content_yaml = yaml.dump(block.content, allow_unicode=True, sort_keys=True).rstrip()
         return f"```data\n{content_yaml}\n```"
+
+    def _write_data(self, block: CdmDataBlock) -> str:
+        return self.write_data_block(block)
 
     def _indent(self, text: str, spaces: int) -> str:
         prefix = " " * spaces
