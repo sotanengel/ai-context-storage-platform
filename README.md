@@ -114,7 +114,17 @@ docker compose run --rm -i formaforge formaforge serve --transport stdio
 |---|---|
 | `formaforge serve` | Start the MCP server |
 | `formaforge serve --transport sse --host HOST --port PORT` | Start with HTTP transport |
+| `formaforge pack` | Pack Bronze storage into a ZIP with manifest and AI restore guide |
 | `formaforge version` | Print version and exit |
+
+**`formaforge pack` options**
+
+| Option | Default | Description |
+|---|---|---|
+| `--output` / `-o` | `formaforge-bronze-<UTC timestamp>.zip` | Output ZIP path |
+| `--storage-dir` | `FORMAFORGE_STORAGE_DIR` or `~/.formaforge/bronze` | Bronze storage directory to pack |
+
+The ZIP includes `manifest.json`, `FORMAFORGE_AI_RESTORE_GUIDE.md` (mechanically generated from the manifest), and a `bronze/` tree mirroring the storage layout.
 
 **`formaforge serve` options**
 

@@ -10,6 +10,7 @@ This file provides codebase context for AI assistants (Claude Code, etc.) workin
 src/formaforge/
 ├── ai/               AiConverter (sync + async Anthropic API calls), prompt templates
 ├── bronze/           BronzeIngester: raw file ingestion, MIME detection, checksum
+├── export/           BronzePacker: ZIP export with manifest + mechanical AI restore guide
 ├── gold/
 │   ├── adapters/     BaseAdapter + 8 built-in adapters, AdapterRegistry singleton
 │   ├── materializer.py   GoldMaterializer: CDM → Gold via adapter + token counting
