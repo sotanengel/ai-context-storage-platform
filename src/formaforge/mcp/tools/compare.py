@@ -32,7 +32,7 @@ def compare_formats(
             result = materializer.materialize(doc, request)
             results.append(
                 {
-                    "adapter": name,
+                    "adapter_name": name,
                     "text": result.text,
                     "byte_count": result.byte_count,
                     "token_estimate": result.token_estimate,
@@ -42,7 +42,7 @@ def compare_formats(
         except Exception as exc:
             results.append(
                 {
-                    "adapter": name,
+                    "adapter_name": name,
                     "text": None,
                     "byte_count": 0,
                     "token_estimate": 0,

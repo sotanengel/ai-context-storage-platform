@@ -3,8 +3,8 @@
 import importlib
 import json
 
+from formaforge.gold.adapters import AdapterRegistry
 from formaforge.gold.adapters.base import BaseAdapter
-from formaforge.gold.materializer import _ADAPTERS
 
 
 def register_format_adapter(
@@ -28,7 +28,7 @@ def register_format_adapter(
         if not (isinstance(cls, type) and issubclass(cls, BaseAdapter)):
             return json.dumps({"error": f"{class_name} is not a BaseAdapter subclass."})
         instance = cls()
-        _ADAPTERS[name] = instance
+        AdapterRegistry.instance().register(name, instance)
         return json.dumps({"adapter_id": name, "status": "registered"})
     except (ImportError, AttributeError) as exc:
         return json.dumps({"error": str(exc)})
