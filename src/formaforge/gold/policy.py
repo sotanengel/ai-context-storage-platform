@@ -4,6 +4,7 @@ from formaforge.models.gold import DataShape, Objective, TargetModel, UseCase
 
 _POLICY_TABLE: list[tuple[tuple[UseCase, DataShape, Objective], str]] = [
     ((UseCase.PROMPT_CONTEXT, DataShape.NESTED, Objective.ACCURACY), "yaml"),
+    ((UseCase.PROMPT_CONTEXT, DataShape.NESTED, Objective.COST), "toon"),
     ((UseCase.PROMPT_CONTEXT, DataShape.FLAT_TABLE, Objective.ACCURACY), "markdown_kv"),
     ((UseCase.PROMPT_CONTEXT, DataShape.FLAT_TABLE, Objective.COST), "csv"),
     ((UseCase.PROMPT_CONTEXT, DataShape.UNIFORM_ARRAY, Objective.COST), "csv"),
