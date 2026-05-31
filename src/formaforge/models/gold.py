@@ -53,3 +53,12 @@ class GoldResult(BaseModel):
     byte_count: int
     token_estimate: int
     options: dict[str, str] = Field(default_factory=dict)
+
+
+class BenchmarkResult(BaseModel):
+    adapter: str
+    latency_ms: float
+    byte_count: int
+    token_estimate: int
+    fidelity_score: float = Field(ge=0.0, le=1.0)
+    error: str | None = None

@@ -1,31 +1,18 @@
 """Gold materializer: convert CdmDocument to the optimal output format."""
 
-from formaforge.gold.adapters.base import BaseAdapter
-from formaforge.gold.adapters.csv_adapter import CsvAdapter
-from formaforge.gold.adapters.json_adapter import JsonAdapter
-from formaforge.gold.adapters.jsonl_adapter import JsonlAdapter
-from formaforge.gold.adapters.markdown_kv import MarkdownKvAdapter
-from formaforge.gold.adapters.plaintext_adapter import PlaintextAdapter
-from formaforge.gold.adapters.xml_adapter import XmlAdapter
-from formaforge.gold.adapters.yaml_adapter import YamlAdapter
+from formaforge.gold.adapters import AdapterRegistry
 from formaforge.gold.policy import PolicyEngine
 from formaforge.models.gold import GoldRequest, GoldResult
 from formaforge.models.silver import CdmDocument
 
-_ADAPTERS: dict[str, BaseAdapter] = {
-    "markdown_kv": MarkdownKvAdapter(),
-    "yaml": YamlAdapter(),
-    "csv": CsvAdapter(),
-    "json": JsonAdapter(),
-    "jsonl": JsonlAdapter(),
-    "xml": XmlAdapter(),
-    "plaintext": PlaintextAdapter(),
-}
+# Backward-compatible alias used by register_format_adapter tool
+_ADAPTERS = AdapterRegistry.instance()._adapters
 
 
 class GoldMaterializer:
     def __init__(self) -> None:
         self._policy = PolicyEngine()
+        self._registry = AdapterRegistry.instance()
 
     def materialize(self, doc: CdmDocument, request: GoldRequest) -> GoldResult:
         adapter_name = request.adapter_name or self._policy.recommend(
@@ -34,7 +21,7 @@ class GoldMaterializer:
             target_model=request.target_model,
             objective=request.objective,
         )
-        adapter = _ADAPTERS.get(adapter_name)
+        adapter = self._registry.get(adapter_name)
         if not adapter:
             raise ValueError(f"Unknown adapter: {adapter_name!r}")
 
@@ -52,5 +39,6 @@ class GoldMaterializer:
 
     def list_adapters(self) -> list[dict[str, str]]:
         return [
-            {"name": name, "class": type(adapter).__name__} for name, adapter in _ADAPTERS.items()
+            {"name": name, "class": type(adapter).__name__}
+            for name, adapter in self._registry.all().items()
         ]
