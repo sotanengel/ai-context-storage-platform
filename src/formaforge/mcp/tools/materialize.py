@@ -15,6 +15,7 @@ def materialize_gold(
     data_shape: str = "document",
     target_model: str = "generic",
     objective: str = "balance",
+    pii_mask: str = "false",
     options: str = "{}",
 ) -> str:
     """Materialize a CDM document in the specified or recommended Gold format.
@@ -27,6 +28,7 @@ def materialize_gold(
         data_shape: Data shape for auto-selection.
         target_model: Target model for auto-selection.
         objective: Optimization objective for auto-selection.
+        pii_mask: Set to "true" to replace PII entities with placeholders.
         options: JSON string of adapter options.
 
     Returns:
@@ -41,6 +43,7 @@ def materialize_gold(
         target_model=TargetModel(target_model),
         objective=Objective(objective),
         adapter_name=adapter_name,
+        pii_mask=pii_mask.lower() == "true",
         options={k: str(v) for k, v in opts.items()},
     )
     result = GoldMaterializer().materialize(doc, request)

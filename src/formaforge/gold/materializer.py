@@ -28,6 +28,10 @@ class GoldMaterializer:
             raise ValueError(f"Unknown adapter: {adapter_name!r}")
 
         text = adapter.render(doc, **request.options)
+        if request.pii_mask:
+            from formaforge.silver.pii_detector import PiiDetector
+
+            text = PiiDetector().mask(text)
         token_estimate = self._token_counter.count(text, str(request.target_model))
 
         return GoldResult(
