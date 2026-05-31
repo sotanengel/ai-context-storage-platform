@@ -1,0 +1,83 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "formaforge"
+version = "0.1.0"
+description = "Multi-format to AI-optimal format conversion platform"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=1.9",
+    "anthropic>=0.40",
+    "pydantic>=2.10",
+    "pyyaml>=6.0",
+    "python-frontmatter>=1.1",
+    "lxml>=5.3",
+    "defusedxml>=0.7",
+    "sqlalchemy[asyncio]>=2.0",
+    "aiosqlite>=0.20",
+    "alembic>=1.14",
+    "python-dotenv>=1.0",
+    "typer>=0.15",
+    "rich>=13.0",
+    "httpx>=0.27",
+    "chardet>=5.2",
+    "python-magic>=0.4.27",
+    "tomli-w>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "ruff>=0.9",
+    "mypy>=1.14",
+    "pre-commit>=4.0",
+    "types-pyyaml",
+    "types-defusedxml",
+    "lxml-stubs",
+]
+
+[project.scripts]
+formaforge = "formaforge.cli:app"
+
+[[tool.uv.index]]
+name = "flatt-tech"
+url = "https://flatt.tech/simple/"
+default = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "--cov=src/formaforge --cov-report=term-missing"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "PTH"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["formaforge"]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/formaforge"]
