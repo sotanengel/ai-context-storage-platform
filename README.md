@@ -234,26 +234,32 @@ Use `CdmMigrator.migrate_text(text)` to parse any version and upgrade to v2.0 au
 
 ## Development Guide
 
+ローカル開発コマンドは `make` で短縮できます。一覧は `make help` で確認できます。
+
 ### Setup
 
 ```bash
-uv sync --all-extras
-uv run pre-commit install
+make setup    # 依存関係インストール + pre-commit フック設定
+make sync     # 依存関係のみ再同期
 ```
 
 ### Run tests
 
 ```bash
-uv run pytest                        # all tests with coverage
-uv run pytest tests/unit/ -q         # unit tests only
-uv run pytest -k "test_normalizer"   # filter by name
+make test           # 全テスト（カバレッジ付き）
+make test-unit      # ユニットテストのみ（高速）
+uv run pytest -k "test_normalizer"   # 名前でフィルタ（直接実行）
 ```
 
 ### Lint and type check
 
 ```bash
-uv run ruff check src/ tests/
-uv run mypy src/
+make lint       # ruff lint（CI と一致）
+make fmt        # フォーマット適用
+make fmt-check  # フォーマットチェック（CI と一致）
+make type       # mypy 型チェック（CI と一致）
+make check      # CI 相当の一括検証（PR 前に推奨）
+make hooks      # pre-commit 全フック実行
 ```
 
 ### Adding a new Gold adapter
