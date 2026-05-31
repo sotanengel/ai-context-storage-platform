@@ -38,12 +38,17 @@ class SilverNormalizer:
         record: BronzeRecord,
         conversion_method: ConversionMethod = ConversionMethod.AUTO,
     ) -> CdmDocument:
-        raw_bytes = self._read_raw(record)
+        from formaforge.silver.pii_detector import PiiDetector
 
+        raw_bytes = self._read_raw(record)
         effective_method = self._resolve_method(record, conversion_method)
 
         if effective_method == ConversionMethod.DETERMINISTIC:
-            return self._convert_deterministic(raw_bytes, record)
+            doc = self._convert_deterministic(raw_bytes, record)
+            pii_flags = PiiDetector().detect(doc.body)
+            if pii_flags:
+                doc.frontmatter.pii_flags = pii_flags
+            return doc
 
         raise UnknownFormatError(
             f"AI conversion not yet implemented. "

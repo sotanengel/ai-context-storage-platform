@@ -43,6 +43,7 @@ class GoldRequest(BaseModel):
     data_shape: DataShape = DataShape.DOCUMENT
     objective: Objective = Objective.BALANCE
     adapter_name: str | None = None
+    pii_mask: bool = False
     options: dict[str, str] = Field(default_factory=dict)
 
 
