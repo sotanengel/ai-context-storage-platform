@@ -12,8 +12,8 @@ from formaforge.mcp.tools.recommend import recommend_format
 from formaforge.mcp.tools.register_adapter import register_format_adapter
 
 
-def create_server() -> FastMCP:
-    server = FastMCP("formaforge")
+def create_server(host: str = "127.0.0.1", port: int = 8000) -> FastMCP:
+    server = FastMCP("formaforge", host=host, port=port)
 
     server.add_tool(ingest_to_bronze)
     server.add_tool(normalize_to_silver)

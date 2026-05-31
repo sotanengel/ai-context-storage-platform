@@ -59,6 +59,33 @@ def test_recommend_format_returns_adapter_name() -> None:
     assert parsed["format"] == "yaml"
 
 
+def test_server_custom_host_port() -> None:
+    server = create_server(host="0.0.0.0", port=9090)
+    assert server.settings.host == "0.0.0.0"
+    assert server.settings.port == 9090
+
+
+def test_cli_serve_help_shows_transport() -> None:
+    from typer.testing import CliRunner
+
+    from formaforge.cli import app
+
+    runner = CliRunner()
+    result = runner.invoke(app, ["serve", "--help"])
+    assert result.exit_code == 0
+    assert "transport" in result.output.lower()
+
+
+def test_cli_serve_default_transport_is_stdio() -> None:
+    from typer.testing import CliRunner
+
+    from formaforge.cli import app
+
+    runner = CliRunner()
+    result = runner.invoke(app, ["serve", "--help"])
+    assert "stdio" in result.output
+
+
 def test_normalize_then_materialize(tmp_path: Path) -> None:
     import base64
 

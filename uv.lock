@@ -621,6 +621,9 @@ dev = [
     { name = "types-defusedxml" },
     { name = "types-pyyaml" },
 ]
+http = [
+    { name = "uvicorn" },
+]
 tokens = [
     { name = "tiktoken" },
 ]
@@ -657,8 +660,9 @@ requires-dist = [
     { name = "typer", specifier = ">=0.15" },
     { name = "types-defusedxml", marker = "extra == 'dev'" },
     { name = "types-pyyaml", marker = "extra == 'dev'" },
+    { name = "uvicorn", marker = "extra == 'http'", specifier = ">=0.30" },
 ]
-provides-extras = ["tokens", "binary", "dev"]
+provides-extras = ["tokens", "http", "binary", "dev"]
 
 [[package]]
 name = "greenlet"
