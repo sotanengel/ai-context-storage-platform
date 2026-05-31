@@ -1,5 +1,6 @@
 """Silver normalization: route Bronze records to the correct converter."""
 
+from formaforge.ai.ai_converter import AiConverter
 from formaforge.models.bronze import BronzeRecord, StructureClass
 from formaforge.models.silver import CdmDocument, ConversionMethod
 from formaforge.silver.converters.base import BaseConverter
@@ -12,6 +13,7 @@ from formaforge.silver.converters.toml_converter import TomlConverter
 from formaforge.silver.converters.xlsx_converter import XlsxConverter
 from formaforge.silver.converters.xml_converter import XmlConverter
 from formaforge.silver.converters.yaml_converter import YamlConverter
+from formaforge.silver.pii_detector import PiiDetector
 
 _DETERMINISTIC_CONVERTERS: dict[str, BaseConverter] = {
     "json": JsonConverter(),
@@ -38,22 +40,19 @@ class SilverNormalizer:
         record: BronzeRecord,
         conversion_method: ConversionMethod = ConversionMethod.AUTO,
     ) -> CdmDocument:
-        from formaforge.silver.pii_detector import PiiDetector
-
         raw_bytes = self._read_raw(record)
         effective_method = self._resolve_method(record, conversion_method)
 
         if effective_method == ConversionMethod.DETERMINISTIC:
             doc = self._convert_deterministic(raw_bytes, record)
-            pii_flags = PiiDetector().detect(doc.body)
-            if pii_flags:
-                doc.frontmatter.pii_flags = pii_flags
-            return doc
+        else:
+            raw_text = raw_bytes.decode("utf-8", errors="replace")
+            doc = AiConverter().convert(raw_text, record.source_uri, record.source_format)
 
-        raise UnknownFormatError(
-            f"AI conversion not yet implemented. "
-            f"Record {record.id} has structure_class={record.structure_class}."
-        )
+        pii_flags = PiiDetector().detect(doc.body)
+        if pii_flags:
+            doc.frontmatter.pii_flags = pii_flags
+        return doc
 
     def _resolve_method(
         self, record: BronzeRecord, requested: ConversionMethod
