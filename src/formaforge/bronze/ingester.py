@@ -5,14 +5,13 @@ from pathlib import Path
 
 from formaforge.bronze.checksums import sha256_of_bytes
 from formaforge.bronze.detector import StructureClassifier
+from formaforge.config import resolve_storage_dir
 from formaforge.models.bronze import BronzeRecord
-
-_DEFAULT_STORAGE = Path.home() / ".formaforge" / "bronze"
 
 
 class BronzeIngester:
     def __init__(self, storage_dir: Path | None = None) -> None:
-        self._storage = storage_dir or _DEFAULT_STORAGE
+        self._storage = resolve_storage_dir(storage_dir)
         self._registry: dict[str, BronzeRecord] = {}
         self._classifier = StructureClassifier()
 

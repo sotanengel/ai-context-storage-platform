@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from formaforge.bronze.ingester import BronzeIngester
+from formaforge.config import resolve_storage_dir
 from formaforge.gold.adapters.base import BaseAdapter
 from formaforge.gold.fidelity import fidelity_score
 from formaforge.gold.materializer import GoldMaterializer
@@ -183,5 +184,6 @@ class PipelineService:
 
 def create_pipeline_service(storage_dir: Path | None = None) -> PipelineService:
     """Create a PipelineService with a shared BronzeIngester storage directory."""
-    ingester = BronzeIngester(storage_dir=storage_dir)
+    resolved = resolve_storage_dir(storage_dir)
+    ingester = BronzeIngester(storage_dir=resolved)
     return PipelineService(ingester=ingester)

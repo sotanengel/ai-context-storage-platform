@@ -63,3 +63,15 @@ def test_ingest_text_detects_unstructured(ingester: BronzeIngester) -> None:
     content = b"Just some free-form text without structure."
     record = ingester.ingest("uri://notes.txt", content, "notes.txt")
     assert record.structure_class == StructureClass.UNSTRUCTURED
+
+
+def test_ingester_uses_formaforge_storage_dir_env(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    storage_dir = tmp_path / "env-bronze"
+    monkeypatch.setenv("FORMAFORGE_STORAGE_DIR", str(storage_dir))
+    ingester = BronzeIngester()
+    content = b'{"x": 1}'
+    record = ingester.ingest("uri://data.json", content, "data.json")
+    assert Path(record.raw_content_path).parent.parent == storage_dir

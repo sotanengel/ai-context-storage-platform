@@ -10,9 +10,18 @@ def serve(
     transport: str = typer.Option(
         "stdio",
         help="Transport protocol: stdio | sse | streamable-http",
+        envvar="FORMAFORGE_TRANSPORT",
     ),
-    host: str = typer.Option("127.0.0.1", help="Bind host (for sse/streamable-http)"),
-    port: int = typer.Option(8000, help="Bind port (for sse/streamable-http)"),
+    host: str = typer.Option(
+        "127.0.0.1",
+        help="Bind host (for sse/streamable-http)",
+        envvar="FORMAFORGE_HOST",
+    ),
+    port: int = typer.Option(
+        8000,
+        help="Bind port (for sse/streamable-http)",
+        envvar="FORMAFORGE_PORT",
+    ),
 ) -> None:
     """Start the MCP server."""
     from formaforge.mcp.server import create_server
