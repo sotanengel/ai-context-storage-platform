@@ -212,3 +212,5 @@ def _make_stream_mock(full_text: str) -> MagicMock:
 Pre-commit hooks (`.pre-commit-config.yaml`): `ruff`, `ruff-format`, trailing whitespace, end-of-file, yaml/toml check, large files, merge conflicts, `mypy`.
 
 GitHub Actions (`.github/workflows/`): runs on push/PR to `main`, executes `uv run pytest` + `uv run ruff check` + `uv run mypy src/`. Coverage threshold ≥ 80%.
+
+Local equivalent: `make check` (see root `Makefile`; `make help` for all targets).
