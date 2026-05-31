@@ -2,6 +2,7 @@
 
 from formaforge.gold.adapters import AdapterRegistry
 from formaforge.gold.policy import PolicyEngine
+from formaforge.gold.token_counter import TokenCounter
 from formaforge.models.gold import GoldRequest, GoldResult
 from formaforge.models.silver import CdmDocument
 
@@ -13,6 +14,7 @@ class GoldMaterializer:
     def __init__(self) -> None:
         self._policy = PolicyEngine()
         self._registry = AdapterRegistry.instance()
+        self._token_counter = TokenCounter()
 
     def materialize(self, doc: CdmDocument, request: GoldRequest) -> GoldResult:
         adapter_name = request.adapter_name or self._policy.recommend(
@@ -26,7 +28,7 @@ class GoldMaterializer:
             raise ValueError(f"Unknown adapter: {adapter_name!r}")
 
         text = adapter.render(doc, **request.options)
-        token_estimate = adapter.estimate_tokens(text)
+        token_estimate = self._token_counter.count(text, str(request.target_model))
 
         return GoldResult(
             silver_id=request.silver_id,
