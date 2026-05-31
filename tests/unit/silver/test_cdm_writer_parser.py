@@ -44,6 +44,14 @@ def test_write_data_block() -> None:
     assert "nested:" in text
 
 
+def test_write_data_block_public_api() -> None:
+    block = CdmDataBlock(content={"key": "value"})
+    text = CdmWriter().write_data_block(block)
+    assert text.startswith("```data")
+    assert "key: value" in text
+    assert text.endswith("```")
+
+
 def test_parse_minimal_cdm() -> None:
     text = """---
 source_format: json

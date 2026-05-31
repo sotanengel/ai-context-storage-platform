@@ -57,3 +57,14 @@ def test_registry_all_returns_dict() -> None:
     all_adapters = registry.all()
     assert isinstance(all_adapters, dict)
     assert "yaml" in all_adapters
+
+
+def test_registry_reset_clears_custom_adapters() -> None:
+    registry = AdapterRegistry.instance()
+    registry.register("dummy_test", _DummyAdapter())
+    assert registry.get("dummy_test") is not None
+
+    AdapterRegistry.reset_for_testing()
+    fresh = AdapterRegistry.instance()
+    assert fresh.get("dummy_test") is None
+    assert fresh.get("yaml") is not None

@@ -50,6 +50,11 @@ class AdapterRegistry:
     def list_names(self) -> list[str]:
         return list(self._adapters.keys())
 
+    @classmethod
+    def reset_for_testing(cls) -> None:
+        """Reset singleton; for pytest only."""
+        cls._instance = None
+
 
 __all__ = [
     "AdapterRegistry",
