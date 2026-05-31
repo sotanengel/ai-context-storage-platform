@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help setup sync test test-unit lint fmt fmt-check type check hooks serve serve-sse
+.PHONY: help setup sync test test-unit lint fmt fmt-check type check hooks serve serve-sse docker-build docker-up docker-down
 
 help: ## 利用可能なコマンド一覧
 	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -39,3 +39,12 @@ serve: ## MCP サーバー（stdio）
 
 serve-sse: ## MCP サーバー（SSE）
 	uv run formaforge serve --transport sse --host 127.0.0.1 --port 8000
+
+docker-build: ## Docker イメージをビルド
+	docker compose build
+
+docker-up: ## Docker Compose で起動
+	docker compose up --build
+
+docker-down: ## Docker Compose を停止
+	docker compose down

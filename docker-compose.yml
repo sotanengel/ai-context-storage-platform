@@ -1,0 +1,32 @@
+services:
+  formaforge:
+    build:
+      context: .
+      secrets:
+        - takumi_guard_token
+    ports:
+      - "${FORMAFORGE_PORT:-8000}:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      FORMAFORGE_TRANSPORT: streamable-http
+      FORMAFORGE_HOST: 0.0.0.0
+      FORMAFORGE_PORT: 8000
+      FORMAFORGE_STORAGE_DIR: /data/bronze
+    volumes:
+      - formaforge-data:/data/bronze
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "http://127.0.0.1:8000/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  formaforge-data:
+
+secrets:
+  takumi_guard_token:
+    environment: UV_INDEX_FLATT_TECH_PASSWORD

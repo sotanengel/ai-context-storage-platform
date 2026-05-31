@@ -41,3 +41,19 @@ jobs:
 
       - name: Run tests
         run: uv run pytest
+
+  docker-build:
+    name: Docker build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        env:
+          DOCKER_BUILDKIT: 1
+          UV_INDEX_FLATT_TECH_PASSWORD: ${{ secrets.TAKUMI_GUARD_TOKEN }}
+        run: |
+          docker build \
+            --secret id=takumi_guard_token,env=UV_INDEX_FLATT_TECH_PASSWORD \
+            -t formaforge:ci .

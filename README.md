@@ -78,6 +78,34 @@ formaforge serve --transport sse --host 127.0.0.1 --port 8000
 formaforge serve --transport streamable-http --port 8000
 ```
 
+### Docker
+
+Prerequisites: Docker Engine and Docker Compose v2.
+
+```bash
+cp .env.example .env
+# Edit .env and set ANTHROPIC_API_KEY=sk-ant-...
+
+docker compose up --build
+```
+
+The container listens on `http://localhost:8000` with `streamable-http` transport by default.
+Bronze data is persisted in the `formaforge-data` Docker volume (`FORMAFORGE_STORAGE_DIR=/data/bronze`).
+
+Useful commands:
+
+```bash
+make docker-build   # build image only
+make docker-up      # build and start in foreground
+make docker-down    # stop containers
+```
+
+For stdio transport (e.g. Claude Desktop via `docker run -i`):
+
+```bash
+docker compose run --rm -i formaforge formaforge serve --transport stdio
+```
+
 ---
 
 ## CLI Reference
@@ -281,6 +309,10 @@ make hooks      # pre-commit 全フック実行
 |---|---|---|
 | `ANTHROPIC_API_KEY` | Yes (for AI path) | Anthropic API key for unstructured text conversion |
 | `FORMAFORGE_SKIP_PII` | No | Set to `1` to skip PII detection (useful in CI) |
+| `FORMAFORGE_STORAGE_DIR` | No | Bronze storage directory (default: `~/.formaforge/bronze`; Docker: `/data/bronze`) |
+| `FORMAFORGE_TRANSPORT` | No | MCP transport for `formaforge serve` (default: `stdio`; Docker: `streamable-http`) |
+| `FORMAFORGE_HOST` | No | Bind host for HTTP transports (default: `127.0.0.1`; Docker: `0.0.0.0`) |
+| `FORMAFORGE_PORT` | No | Bind port for HTTP transports (default: `8000`) |
 
 ---
 
