@@ -12,13 +12,17 @@ from formaforge.silver.cdm_parser import CdmParser
 class AiConverter:
     MODEL = "claude-sonnet-4-6"
 
-    def __init__(self, require_api_key: bool = False) -> None:
+    def __init__(
+        self,
+        require_api_key: bool = False,
+        parser: CdmParser | None = None,
+    ) -> None:
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if require_api_key and not api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
         self._client = anthropic.Anthropic(api_key=api_key)
         self._async_client = anthropic.AsyncAnthropic(api_key=api_key)
-        self._parser = CdmParser()
+        self._parser = parser or CdmParser()
 
     def convert(self, raw: str, source_uri: str = "", source_format: str = "text") -> CdmDocument:
         prompt = UNSTRUCTURED_TO_CDM_PROMPT_V1.format(

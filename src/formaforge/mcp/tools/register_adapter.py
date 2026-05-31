@@ -3,8 +3,8 @@
 import importlib
 import json
 
-from formaforge.gold.adapters import AdapterRegistry
 from formaforge.gold.adapters.base import BaseAdapter
+from formaforge.services.pipeline import create_pipeline_service
 
 
 def register_format_adapter(
@@ -28,7 +28,8 @@ def register_format_adapter(
         if not (isinstance(cls, type) and issubclass(cls, BaseAdapter)):
             return json.dumps({"error": f"{class_name} is not a BaseAdapter subclass."})
         instance = cls()
-        AdapterRegistry.instance().register(name, instance)
+        service = create_pipeline_service()
+        service.register_adapter(name, instance)
         return json.dumps({"adapter_id": name, "status": "registered"})
     except (ImportError, AttributeError) as exc:
         return json.dumps({"error": str(exc)})

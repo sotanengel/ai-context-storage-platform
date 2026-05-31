@@ -3,8 +3,8 @@
 from formaforge.ai.ai_converter import AiConverter
 from formaforge.models.bronze import BronzeRecord, StructureClass
 from formaforge.models.silver import CdmDocument, ConversionMethod
+from formaforge.privacy.pii_detector import PiiDetector
 from formaforge.silver.converters import ConverterRegistry
-from formaforge.silver.pii_detector import PiiDetector
 
 
 class UnknownFormatError(ValueError):

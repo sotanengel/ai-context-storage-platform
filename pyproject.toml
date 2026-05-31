@@ -61,7 +61,7 @@ url = "https://pypi.org/simple/"
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
-addopts = "--cov=src/formaforge --cov-report=term-missing"
+addopts = "--cov=src/formaforge --cov-report=term-missing --cov-fail-under=80"
 
 [tool.ruff]
 line-length = 100

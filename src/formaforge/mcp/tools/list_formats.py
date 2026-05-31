@@ -2,7 +2,7 @@
 
 import json
 
-from formaforge.gold.materializer import GoldMaterializer
+from formaforge.services.pipeline import create_pipeline_service
 
 
 def list_formats() -> str:
@@ -11,4 +11,5 @@ def list_formats() -> str:
     Returns:
         JSON array with adapter name and class for each registered adapter.
     """
-    return json.dumps(GoldMaterializer().list_adapters())
+    service = create_pipeline_service()
+    return json.dumps(service.list_adapters())
