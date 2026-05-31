@@ -8,6 +8,7 @@ from formaforge.gold.adapters.json_adapter import JsonAdapter
 from formaforge.gold.adapters.jsonl_adapter import JsonlAdapter
 from formaforge.gold.adapters.markdown_kv import MarkdownKvAdapter
 from formaforge.gold.adapters.plaintext_adapter import PlaintextAdapter
+from formaforge.gold.adapters.toon_adapter import ToonAdapter
 from formaforge.gold.adapters.xml_adapter import XmlAdapter
 from formaforge.gold.adapters.yaml_adapter import YamlAdapter
 
@@ -19,6 +20,7 @@ _BUILTIN_ADAPTERS: dict[str, BaseAdapter] = {
     "jsonl": JsonlAdapter(),
     "xml": XmlAdapter(),
     "plaintext": PlaintextAdapter(),
+    "toon": ToonAdapter(),
 }
 
 
@@ -57,6 +59,7 @@ __all__ = [
     "JsonlAdapter",
     "MarkdownKvAdapter",
     "PlaintextAdapter",
+    "ToonAdapter",
     "XmlAdapter",
     "YamlAdapter",
 ]

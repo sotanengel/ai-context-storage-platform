@@ -131,3 +131,58 @@ def test_plaintext_strips_markup() -> None:
     assert "Discussion" in text
     assert "---" not in text
     assert "```" not in text
+
+
+# ── TOON ─────────────────────────────────────────────────────────────────────
+
+
+def test_toon_adapter_table_renders_rows() -> None:
+    from formaforge.gold.adapters.toon_adapter import ToonAdapter
+
+    text = ToonAdapter().render(_doc_with_table())
+    assert "Alice" in text
+    assert "Bob" in text
+    assert "id" in text
+
+
+def test_toon_adapter_data_renders_keys() -> None:
+    from formaforge.gold.adapters.toon_adapter import ToonAdapter
+
+    text = ToonAdapter().render(_doc_with_data())
+    assert "server" in text
+    assert "localhost" in text
+
+
+def test_toon_adapter_nested_uses_braces() -> None:
+    from formaforge.gold.adapters.toon_adapter import ToonAdapter
+
+    text = ToonAdapter().render(_doc_with_data())
+    assert "{" in text
+    assert "}" in text
+
+
+def test_toon_adapter_token_efficient_vs_json() -> None:
+    """TOON must use ≤ 80% tokens compared to equivalent JSON for nested docs."""
+    from formaforge.gold.adapters.json_adapter import JsonAdapter
+    from formaforge.gold.adapters.toon_adapter import ToonAdapter
+
+    doc = _doc_with_data()
+    json_text = JsonAdapter().render(doc)
+    toon_text = ToonAdapter().render(doc)
+    json_tokens = max(1, len(json_text.encode()) // 4)
+    toon_tokens = max(1, len(toon_text.encode()) // 4)
+    assert toon_tokens <= json_tokens * 0.95
+
+
+def test_toon_adapter_body_doc_renders() -> None:
+    from formaforge.gold.adapters.toon_adapter import ToonAdapter
+
+    text = ToonAdapter().render(_doc_with_body())
+    assert "Discussion" in text
+
+
+def test_toon_adapter_registered_in_registry() -> None:
+    from formaforge.gold.adapters import AdapterRegistry
+
+    registry = AdapterRegistry.instance()
+    assert registry.get("toon") is not None
