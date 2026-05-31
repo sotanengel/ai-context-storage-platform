@@ -20,6 +20,10 @@ class BaseConverter(ABC):
     def convert(self, raw: str, source_uri: str = "") -> CdmDocument:
         """Convert raw text to a CdmDocument."""
 
+    def convert_bytes(self, raw: bytes, source_uri: str = "") -> CdmDocument:
+        """Convert raw bytes to a CdmDocument (default: decode as UTF-8 text)."""
+        return self.convert(raw.decode("utf-8", errors="replace"), source_uri)
+
     def _make_frontmatter(self, source_uri: str) -> CdmFrontmatter:
         return CdmFrontmatter(
             source_format=self.source_format,
