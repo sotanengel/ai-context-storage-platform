@@ -17,6 +17,7 @@ _STRUCTURED_EXTENSIONS = {
     "markdown",
 }
 _UNSTRUCTURED_EXTENSIONS = {"pdf", "docx", "doc", "pptx", "txt", "png", "jpg", "jpeg"}
+_STRUCTURED_EXTENSIONS = _STRUCTURED_EXTENSIONS | {"xlsx"}
 
 _FORMAT_BY_EXTENSION = {
     "json": "json",
@@ -31,6 +32,7 @@ _FORMAT_BY_EXTENSION = {
     "markdown": "markdown",
     "pdf": "pdf",
     "docx": "docx",
+    "xlsx": "xlsx",
     "txt": "text",
 }
 
